@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Timer } from "../../../components/timers";
 import { cn } from "../../../utils/cn";
@@ -243,12 +243,12 @@ export default function BoxBreathing() {
 
           {/* Phase Indicators */}
           <div className="flex justify-center gap-4 mb-8">
-            {BREATH_PHASES.map((p, index) => (
+            {BREATH_PHASES.map((phase, i) => (
               <div
-                key={index}
+                key={phase.name + i}
                 className={cn(
                   "w-16 h-2 rounded-full transition-all duration-500",
-                  index === currentPhase ? "bg-white" : "bg-white/30"
+                  i === currentPhase ? "bg-white" : "bg-white/30"
                 )}
               />
             ))}

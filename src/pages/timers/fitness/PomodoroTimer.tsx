@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Timer } from "../../../components/timers";
 import { cn } from "../../../utils/cn";
@@ -25,7 +25,8 @@ export default function PomodoroTimer() {
   const [currentQuote, setCurrentQuote] = useState("");
   const [sessionDuration, setSessionDuration] = useState(WORK_TIME);
 
-  const getSessionDuration = () => {
+  // Memoize getSessionDuration to avoid unnecessary re-renders and fix ESLint warning
+  const getSessionDuration = useCallback(() => {
     if (isWorkSession) return WORK_TIME;
     if (
       pomodoroCount % POMODOROS_BEFORE_LONG_BREAK === 0 &&
@@ -34,7 +35,7 @@ export default function PomodoroTimer() {
       return LONG_BREAK;
     }
     return SHORT_BREAK;
-  };
+  }, [isWorkSession, pomodoroCount]);
 
   const handleComplete = () => {
     if (isWorkSession) {
@@ -55,7 +56,7 @@ export default function PomodoroTimer() {
   // Update session duration when session type changes
   useEffect(() => {
     setSessionDuration(getSessionDuration());
-  }, [isWorkSession, pomodoroCount]);
+  }, [isWorkSession, pomodoroCount, getSessionDuration]);
 
   const getSessionTitle = () => {
     if (isWorkSession) return "Work Session";
