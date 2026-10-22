@@ -21,6 +21,12 @@ export interface Segment {
   countdown?: boolean;
   /** Optional longer instruction, e.g. "Tuang 60 g air memutar". */
   note?: string;
+  /**
+   * System notification + vibration when this segment starts (only shown
+   * while the tab is hidden). Default true; set false for rapid segments
+   * like breathing phases.
+   */
+  notify?: boolean;
 }
 
 export interface Run {

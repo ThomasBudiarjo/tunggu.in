@@ -35,8 +35,10 @@ export function useGlobalTicker() {
           markAnnounced(run.timerId, pos.index);
           const cue = pos.segment.cue ?? "beep";
           if (cue !== "none") play(cue);
-          vibrate(160);
-          notify(`${run.emoji} ${pos.segment.label}`, pos.segment.note ?? `${run.title} — lanjut!`);
+          if (pos.segment.notify !== false) {
+            vibrate(160);
+            notify(`${run.emoji} ${pos.segment.label}`, pos.segment.note ?? `${run.title} — lanjut!`);
+          }
         }
 
         if (pos.segment.countdown) {
