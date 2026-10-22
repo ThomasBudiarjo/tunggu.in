@@ -1,213 +1,104 @@
-import React from "react";
+import type { CSSProperties } from "react";
 import { Link } from "react-router-dom";
-import {
-  ChefHat,
-  Dumbbell,
-  Brain,
-  Gamepad2,
-  Clock,
-  ArrowRight,
-} from "lucide-react";
+import { cn } from "../core/cn";
+import { formatClock, position } from "../core/engine";
+import { useNow } from "../core/hooks";
+import { useRuns } from "../core/runs";
+import { TIMERS } from "../timers/registry";
 
-interface TimerCategory {
-  id: string;
-  name: string;
-  description: string;
-  icon: React.ReactNode;
-  color: string;
-  categoryPath: string;
-  timers: Array<{
-    id: string;
-    name: string;
-    path: string;
-  }>;
-}
-
-const categories: TimerCategory[] = [
-  {
-    id: "kitchen",
-    name: "Kitchen & Cooking",
-    description: "Perfect timing for your culinary adventures",
-    icon: <ChefHat className="h-8 w-8" />,
-    color: "bg-orange-500",
-    categoryPath: "/timers/kitchen",
-    timers: [
-      { id: "egg", name: "Egg Timer", path: "/timers/kitchen/egg" },
-      { id: "steak", name: "Steak Timer", path: "/timers/kitchen/steak" },
-      { id: "coffee", name: "Coffee Timer", path: "/timers/kitchen/coffee" },
-      { id: "tea", name: "Tea Timer", path: "/timers/kitchen/tea" },
-      { id: "dough", name: "Dough Proofing", path: "/timers/kitchen/dough" },
-    ],
-  },
-  {
-    id: "fitness",
-    name: "Health & Fitness",
-    description: "Stay healthy and productive with timed sessions",
-    icon: <Dumbbell className="h-8 w-8" />,
-    color: "bg-green-500",
-    categoryPath: "/timers/fitness",
-    timers: [
-      { id: "pomodoro", name: "Pomodoro", path: "/timers/fitness/pomodoro" },
-      { id: "hiit", name: "HIIT Timer", path: "/timers/fitness/hiit" },
-      {
-        id: "breathing",
-        name: "Box Breathing",
-        path: "/timers/fitness/box-breathing",
-      },
-      {
-        id: "meditation",
-        name: "Meditation",
-        path: "/timers/fitness/meditation",
-      },
-      { id: "nap", name: "Power Nap", path: "/timers/fitness/power-nap" },
-    ],
-  },
-  {
-    id: "productivity",
-    name: "Productivity & Study",
-    description: "Boost your focus and track your time",
-    icon: <Brain className="h-8 w-8" />,
-    color: "bg-blue-500",
-    categoryPath: "/timers/productivity",
-    timers: [
-      { id: "52-17", name: "52/17 Method", path: "/timers/productivity/52-17" },
-      {
-        id: "stopwatch",
-        name: "Stopwatch",
-        path: "/timers/productivity/stopwatch",
-      },
-      {
-        id: "countdown",
-        name: "Countdown to Date",
-        path: "/timers/productivity/countdown",
-      },
-      {
-        id: "burst",
-        name: "Get It Done",
-        path: "/timers/productivity/get-it-done",
-      },
-    ],
-  },
-  {
-    id: "games",
-    name: "Fun & Games",
-    description: "Keep the fun going with game timers",
-    icon: <Gamepad2 className="h-8 w-8" />,
-    color: "bg-purple-500",
-    categoryPath: "/timers/games",
-    timers: [
-      {
-        id: "board-game",
-        name: "Board Game Timer",
-        path: "/timers/games/board-game",
-      },
-      {
-        id: "five-second",
-        name: "Five Second Rule",
-        path: "/timers/games/five-second-rule",
-      },
-    ],
-  },
+/** One-tap presets that open Timer Bebas pre-filled. */
+const QUICK = [
+  { label: "Mie instan", emoji: "🍜", seconds: 180 },
+  { label: "Masker wajah", emoji: "🧖", seconds: 15 * 60 },
+  { label: "Jemur cucian", emoji: "👕", seconds: 2 * 3600 },
+  { label: "Rebus pasta", emoji: "🍝", seconds: 9 * 60 },
+  { label: "Parkir", emoji: "🅿️", seconds: 60 * 60 },
+  { label: "Gosok gigi", emoji: "🪥", seconds: 120 },
+  { label: "Istirahat mata", emoji: "👀", seconds: 20 },
+  { label: "Nasi matang", emoji: "🍚", seconds: 25 * 60 },
 ];
 
-export const Home: React.FC = () => {
+const FEATURED = new Set(["timer", "fokus"]);
+
+export function Home() {
+  const runs = useRuns((s) => s.runs);
+  const anyRunning = Object.keys(runs).length > 0;
+  const now = useNow(500, anyRunning);
+
   return (
-    <div className="space-y-8">
-      {/* Hero Section */}
-      <section className="text-center py-12">
-        <h1 className="text-4xl md:text-6xl font-bold mb-4">
-          Beautiful Timers for Every Moment
+    <div className="space-y-10">
+      <section className="relative pt-2 text-center sm:pt-6">
+        <p className="pop mx-auto mb-5 inline-flex rotate-[-2deg] items-center gap-2 rounded-full bg-[#7bd88f] px-4 py-1 text-sm font-extrabold text-[#0f2414]">
+          10 timer · tanpa iklan · jalan offline
+        </p>
+        <h1 className="mx-auto max-w-3xl text-5xl font-extrabold leading-[0.95] tracking-tight sm:text-7xl">
+          Nunggu jadi{" "}
+          <span className="relative inline-block">
+            <span className="relative z-10">seru</span>
+            <span className="absolute inset-x-[-6px] bottom-1 -z-0 h-4 -rotate-2 rounded-md bg-[#ff7eb6] sm:h-6" />
+          </span>
+          .
         </h1>
-        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          From perfect eggs to productive work sessions, Tunggu.in has the right
-          timer for you.
+        <p className="mx-auto mt-4 max-w-xl text-lg font-semibold text-ink-soft">
+          Timer yang beneran kepake — dari telur setengah matang sampai deep work — dan semuanya punya animasi sendiri.
         </p>
       </section>
 
-      {/* Quick Start */}
-      <section className="bg-card rounded-lg p-6 mb-8">
-        <h2 className="text-2xl font-semibold mb-4 flex items-center">
-          <Clock className="mr-2" />
-          Quick Start
-        </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Link
-            to="/timers/fitness/pomodoro"
-            className="p-4 bg-background rounded-lg hover:shadow-md transition-shadow text-center"
-          >
-            <div className="text-3xl font-bold text-primary">25:00</div>
-            <div className="text-sm text-muted-foreground">Pomodoro</div>
-          </Link>
-          <Link
-            to="/timers/kitchen/egg"
-            className="p-4 bg-background rounded-lg hover:shadow-md transition-shadow text-center"
-          >
-            <div className="text-3xl font-bold text-primary">7:00</div>
-            <div className="text-sm text-muted-foreground">Perfect Egg</div>
-          </Link>
-          <Link
-            to="/timers/fitness/hiit"
-            className="p-4 bg-background rounded-lg hover:shadow-md transition-shadow text-center"
-          >
-            <div className="text-3xl font-bold text-primary">20:10</div>
-            <div className="text-sm text-muted-foreground">HIIT</div>
-          </Link>
-          <Link
-            to="/timers/fitness/power-nap"
-            className="p-4 bg-background rounded-lg hover:shadow-md transition-shadow text-center"
-          >
-            <div className="text-3xl font-bold text-primary">20:00</div>
-            <div className="text-sm text-muted-foreground">Power Nap</div>
-          </Link>
-        </div>
-      </section>
-
-      {/* Categories */}
-      <section className="space-y-8">
-        <h2 className="text-3xl font-bold text-center mb-8">
-          Explore Timer Categories
-        </h2>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          {categories.map((category) => (
-            <div
-              key={category.id}
-              className="bg-card rounded-lg p-6 hover:shadow-lg transition-shadow"
+      <section aria-label="Mulai cepat" className="relative left-1/2 w-screen -translate-x-1/2 overflow-hidden py-2">
+        <div className="animate-marquee flex w-max gap-3 hover:[animation-play-state:paused]">
+          {[...QUICK, ...QUICK].map((q, i) => (
+            <Link
+              key={i}
+              to={`/timer?d=${q.seconds}&l=${encodeURIComponent(q.label)}`}
+              className="pop pressable flex shrink-0 items-center gap-2 rounded-full bg-surface px-4 py-2 font-bold"
             >
-              <Link to={category.categoryPath} className="block mb-4">
-                <div className="flex items-start space-x-4">
-                  <div
-                    className={`${category.color} text-white p-3 rounded-lg`}
-                  >
-                    {category.icon}
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-semibold mb-1 hover:text-primary transition-colors">
-                      {category.name}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      {category.description}
-                    </p>
-                  </div>
-                </div>
-              </Link>
-
-              <div className="space-y-2">
-                {category.timers.map((timer) => (
-                  <Link
-                    key={timer.id}
-                    to={timer.path}
-                    className="flex items-center justify-between p-3 rounded-lg hover:bg-accent transition-colors group"
-                  >
-                    <span className="font-medium">{timer.name}</span>
-                    <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-                  </Link>
-                ))}
-              </div>
-            </div>
+              <span className="text-xl">{q.emoji}</span>
+              {q.label}
+              <span className="font-mono text-sm text-ink-soft">{formatClock(q.seconds)}</span>
+            </Link>
           ))}
         </div>
       </section>
+
+      <section className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
+        {TIMERS.map((t, i) => {
+          const run = runs[t.id];
+          const pos = run ? position(run, now) : null;
+          const featured = FEATURED.has(t.id);
+          return (
+            <Link
+              key={t.id}
+              to={`/${t.id}`}
+              style={{ "--accent": t.accent, "--accent-ink": t.accentInk, animationDelay: `${i * 40}ms` } as CSSProperties}
+              className={cn(
+                "pop pressable group animate-pop-in relative flex min-h-44 flex-col justify-between overflow-hidden rounded-3xl bg-accent p-4 text-accent-ink sm:min-h-52 sm:p-5",
+                featured && "col-span-2",
+                i % 2 ? "hover:rotate-1" : "hover:-rotate-1",
+              )}
+            >
+              <span
+                aria-hidden
+                className="pointer-events-none absolute -right-6 -top-6 size-28 rounded-full bg-white/25 transition-transform duration-500 group-hover:scale-150 sm:size-36"
+              />
+              <div className="relative flex items-start justify-between gap-2">
+                <span className="text-4xl drop-shadow-[2px_2px_0_rgba(0,0,0,0.25)] transition-transform group-hover:scale-125 group-hover:-rotate-12 sm:text-5xl">
+                  {t.emoji}
+                </span>
+                {pos && (
+                  <span className="rounded-full border-2 border-current bg-white/40 px-2 py-0.5 font-mono text-xs font-bold">
+                    {run.finished ? "selesai!" : formatClock(pos.totalRemaining)}
+                  </span>
+                )}
+              </div>
+              <div className="relative">
+                <h2 className="text-xl font-extrabold leading-tight tracking-tight sm:text-2xl">{t.name}</h2>
+                <p className="text-sm font-bold opacity-80">{t.tagline}</p>
+                <p className={cn("mt-2 text-sm font-medium opacity-75", !featured && "hidden sm:block")}>{t.blurb}</p>
+              </div>
+            </Link>
+          );
+        })}
+      </section>
     </div>
   );
-};
+}
