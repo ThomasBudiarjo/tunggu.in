@@ -2,6 +2,8 @@ import { Suspense } from "react";
 import { BrowserRouter, Link, Navigate, Route, Routes, useParams } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import { useGlobalTicker } from "./core/ticker";
+// Eager so focus time is credited even if /fokus is never opened again.
+import "./timers/fokus/stats";
 import { Home } from "./pages/Home";
 import { timerById } from "./timers/registry";
 

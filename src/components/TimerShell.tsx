@@ -44,12 +44,12 @@ export function TimerShell({
           <p className="truncate text-sm font-semibold text-ink-soft">{def?.tagline}</p>
         </div>
       </div>
-      <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:gap-8">
-        <div className="space-y-4 lg:sticky lg:top-24">
+      <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-5 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:gap-8">
+        <div className="min-w-0 space-y-4 lg:sticky lg:top-24">
           {stage}
           {controls}
         </div>
-        <div className="space-y-4">{children}</div>
+        <div className="min-w-0 space-y-4">{children}</div>
       </div>
     </div>
   );

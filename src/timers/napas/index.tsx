@@ -42,6 +42,7 @@ export default function Napas() {
       emoji: def.emoji,
       path: `/${ID}`,
       segments: buildSegments(pattern, minutes, sound),
+      finishCue: "chime",
       meta: { pattern: pattern.id, perCycle: pattern.phases.length, cycles },
     });
 

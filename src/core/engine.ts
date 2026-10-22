@@ -45,6 +45,8 @@ export interface Run {
   lastIndex: number;
   finished: boolean;
   finishedAt: number | null;
+  /** Sound when the run ends. Defaults to the loud "alarm". */
+  finishCue?: "alarm" | "chime" | "soft";
   meta?: Record<string, unknown>;
 }
 

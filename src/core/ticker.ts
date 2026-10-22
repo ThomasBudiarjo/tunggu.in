@@ -25,8 +25,9 @@ export function useGlobalTicker() {
 
         if (pos.done) {
           finish(run.timerId, now);
-          play("alarm");
-          vibrate([300, 120, 300, 120, 600]);
+          const cue = run.finishCue ?? "alarm";
+          play(cue);
+          vibrate(cue === "alarm" ? [300, 120, 300, 120, 600] : 200);
           notify(`${run.emoji} ${run.title} selesai!`, "Waktunya habis. Yuk cek!");
           continue;
         }

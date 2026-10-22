@@ -8,6 +8,7 @@ export interface StartOptions {
   emoji: string;
   path: string;
   segments: Segment[];
+  finishCue?: Run["finishCue"];
   meta?: Record<string, unknown>;
 }
 

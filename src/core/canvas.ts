@@ -58,9 +58,9 @@ export function useCanvas(
     }
     const size = { cssWidth: 1, cssHeight: 1, scale: 1 };
     const resize = () => {
-      const rect = canvas.getBoundingClientRect();
-      size.cssWidth = Math.max(1, rect.width);
-      size.cssHeight = Math.max(1, rect.height);
+      // clientWidth ignores transforms (e.g. the page's pop-in scale).
+      size.cssWidth = Math.max(1, canvas.clientWidth);
+      size.cssHeight = Math.max(1, canvas.clientHeight);
       if (fixedW && fixedH) {
         canvas.width = fixedW;
         canvas.height = fixedH;
@@ -170,10 +170,9 @@ export function useShader(fragment: string, uniforms: () => Uniforms = () => ({}
     };
 
     const resize = () => {
-      const rect = canvas.getBoundingClientRect();
       const s = Math.min(2, window.devicePixelRatio || 1) * resolution;
-      canvas.width = Math.max(1, Math.round(rect.width * s));
-      canvas.height = Math.max(1, Math.round(rect.height * s));
+      canvas.width = Math.max(1, Math.round(canvas.clientWidth * s));
+      canvas.height = Math.max(1, Math.round(canvas.clientHeight * s));
       gl.viewport(0, 0, canvas.width, canvas.height);
     };
     resize();

@@ -20,7 +20,7 @@ export function Button({ variant = "plain", size = "md", className, onClick, ...
         onClick?.(e);
       }}
       className={cn(
-        "pop pressable inline-flex select-none items-center justify-center gap-2 rounded-2xl font-bold disabled:opacity-40",
+        "pop pressable inline-flex select-none items-center whitespace-nowrap justify-center gap-2 rounded-2xl font-bold disabled:opacity-40",
         size === "sm" && "h-9 px-3 text-sm",
         size === "md" && "h-12 px-5 text-base",
         size === "lg" && "h-16 px-8 text-xl",
@@ -70,7 +70,7 @@ export function Segmented<T extends string | number>({
               onChange(o.value);
             }}
             className={cn(
-              "pressable flex min-h-10 flex-col items-start justify-center rounded-xl border-[2.5px] border-line px-3 py-1.5 text-left text-sm font-bold leading-tight disabled:opacity-40",
+              "pressable flex min-h-10 flex-col items-start justify-center rounded-xl border-[2.5px] border-line px-3 py-1.5 text-left text-sm font-bold leading-tight disabled:opacity-60",
               active ? "bg-accent text-accent-ink shadow-pop-sm" : "bg-surface text-ink",
             )}
           >
@@ -210,7 +210,7 @@ export function RunControls({
     );
   }
   return (
-    <div className={cn("flex flex-wrap items-center gap-2", className)}>
+    <div className={cn("flex items-center gap-2 [&>button]:px-4 sm:[&>button]:px-8", className)}>
       {!run.finished && (
         <Button variant={running ? "ink" : "accent"} size="lg" className="flex-1" onClick={handle.toggle}>
           {running ? <Pause className="size-6 fill-current" /> : <Play className="size-6 fill-current" />}
